@@ -22,8 +22,14 @@ module OneMoreRating
 
       def rating_score(scope, period_name = nil)
         period_no = period_name ? period_no_by_name(period_name) : ""
+        score_attr = "score#{period_no}"
 
-        return find_cached_rating(scope).try("score#{period_no}") || 0
+        if !scope.nil?
+          return find_cached_rating(scope).try(score_attr) || 0
+        else
+          # No scope given. Count average by all scopes
+          self.cached_ratings.map{|cache| cache.try(score_attr)}.inject{ |sum, score| sum + score }.to_f / self.cached_ratings.count
+        end
       end
 
       def count_votes(scope, starting_at = nil)

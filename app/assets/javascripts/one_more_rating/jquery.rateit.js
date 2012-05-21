@@ -22,7 +22,7 @@
       options = $.extend({}, $.fn.rateit.defaults, p1); //wants to init new rateit plugin(s).
     }
     else if (tp1 == 'string' && p2 === undefined) {
-      return this.data('rateit' + capitaliseFirstLetter(p1)); //wants to get a value.
+      return this.data('rateit-' + p1); //wants to get a value.
     }
     else if (tp1 == 'string') {
       mode = 'setvalue'
@@ -33,7 +33,7 @@
 
       //shorten all the item.data('rateit-XXX'), will save space in closure compiler, will be like item.data('XXX') will become x('XXX')
       var itemdata = function (key, value) {
-          arguments[0] = 'rateit' + capitaliseFirstLetter(key);
+          arguments[0] = 'rateit-' + key;
           return item.data.apply(item, arguments); ////Fix for WI: 523
       };
 
