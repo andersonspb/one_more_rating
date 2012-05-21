@@ -7,7 +7,7 @@ $(function() {
             $.post($(this).data("url"),
                 {rateable_type: $(this).data("rateable_type"),
                     rateable_id: $(this).data("rateable_id"),
-                    scope: $(this).data("scope"),
+                    rateable_scope: $(this).data("rateable_scope"),
                     score: value},
                 function(data) {
                     $(target).rateit(value, data);
