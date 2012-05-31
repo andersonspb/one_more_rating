@@ -5,6 +5,7 @@ module OneMoreRating
     def self.included(base)
       @periods = nil
       @statistics_method = nil
+      @rateable_scope = nil
     end
 
     module InstanceMethods
@@ -106,6 +107,11 @@ module OneMoreRating
       def statistics_method
         @statistics_method
       end
+
+      def rateable_scope
+        @rateable_scope
+      end
+
     end
   end
 
@@ -120,7 +126,7 @@ module OneMoreRating
 
       @periods = options[:periods]||{}
       @statistics_method = options[:statistics_method] || "average"
-
+      @rateable_scope = options[:scope]
     end
   end
 end
