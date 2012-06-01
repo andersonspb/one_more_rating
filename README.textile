@@ -29,9 +29,12 @@ $ rake db:migrate
 5. Include call of "rateable" method to class your are going to rate:
 <pre>
 class MyRateable < ActiveRecord::Base
-    rateable
+    rateable :scope => Proc.new {user.country_id}
 end
 </pre>
+
+Parameters:
+<i>scope</i> - The scope (an integer) the rating will be counted in.
 
 Optionally. Your can pass the following parameters to "rateable" call:
 
@@ -45,19 +48,18 @@ Example
 <pre>
 class MyRateable < ActiveRecord::Base
   rateable :periods => {:week => 1.week, :month => 1.month, :month3 => 3.months},
-  :statistics_method => :bayesian
+  :statistics_method => :bayesian, :bayesian => {:votes_minimum => 10, :average = > 3}
 end
 </pre>
 
 6. Call "rating_for" helper method in your template
 
 <pre>
-rating_for(@my_rateable, :scope => curent_user.country.id)
+rating_for(@my_rateable)
 </pre>
 
 Parameters:
 <i>First parameter</i> - the object to rate (And show rating for)
-<i>scope</i> - The scope (an integer) the rating will be counted in.
 
 Optional parameters:
 
@@ -69,7 +71,9 @@ Optional parameters:
 
 <i>min</i> Minimal rating value. 0 by default.
 
-<i>max</i> Maximum rating value. 10 by default.
+<i>max</i> Maximum rating value. 5 by default.
+
+<i>step</i> Step of user rating value change. 1 by default. You can put decimal value 0.5 etc
 
 
 Example
