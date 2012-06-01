@@ -78,5 +78,5 @@ Optional parameters:
 
 Example
 <pre>
-rating_for(@my_rateable, :scope => curent_user.country.id, :url => one_more_rating.ratings_path, :period => :week)
+rating_for(@my_rateable, :url => one_more_rating.ratings_path, :period => :week)
 </pre>
