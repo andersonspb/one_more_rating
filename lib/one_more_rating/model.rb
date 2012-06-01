@@ -6,6 +6,8 @@ module OneMoreRating
       @periods = nil
       @statistics_method = nil
       @rateable_scope = nil
+      @bayesian_votes_minimum = nil
+      @bayesian_average = nil
     end
 
     module InstanceMethods
@@ -87,15 +89,12 @@ module OneMoreRating
         return Rating.average("score", :conditions => conditions)
       end
 
-      AVERAGE_CONST = 7.2453
-      VOTES_MINIMUM = 30.0
-
       def calc_statistics_by_bayesian(scope, starting_at = nil)
         conditions = build_conditions(scope, starting_at)
         votes = count_votes(scope, starting_at).to_f
         average = Rating.average("score", :conditions => conditions)
 
-        return  votes/(votes + VOTES_MINIMUM)*average + VOTES_MINIMUM/(votes + VOTES_MINIMUM)*AVERAGE_CONST
+        return  votes/(votes + self.class.bayesian_votes_minimum)*average + self.class.bayesian_votes_minimum/(votes + self.class.bayesian_votes_minimum)*self.class.bayesian_average
       end
     end
 
@@ -112,10 +111,21 @@ module OneMoreRating
         @rateable_scope
       end
 
+      def bayesian_votes_minimum
+        @bayesian_votes_minimum
+      end
+
+      def bayesian_average
+        @bayesian_average
+      end
+
     end
   end
 
   module ModelExtender
+
+    AVERAGE_CONST = 3.5
+    VOTES_MINIMUM = 30.0
 
     def rateable(options)
       has_many :ratings2, :class_name => "OneMoreRating::Rating",  :as => :rateable, :dependent => :destroy
@@ -127,6 +137,10 @@ module OneMoreRating
       @periods = options[:periods]||{}
       @statistics_method = options[:statistics_method] || "average"
       @rateable_scope = options[:scope]
+
+      options[:bayesian] ||= {}
+      @bayesian_votes_minimum = options[:bayesian][:votes_minimum] || VOTES_MINIMUM
+      @bayesian_average = options[:bayesian][:average] || AVERAGE_CONST
     end
   end
 end
