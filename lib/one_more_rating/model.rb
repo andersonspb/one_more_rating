@@ -35,9 +35,8 @@ module OneMoreRating
         end
       end
 
-      def count_votes(scope, starting_at = nil)
-        conditions = build_conditions(scope, starting_at)
-
+      def count_votes(scope, period_name = nil)
+        conditions = build_conditions(scope, period_name)
         return Rating.count(:conditions => conditions)
       end
 
@@ -60,41 +59,38 @@ module OneMoreRating
         cached = find_cached_rating(scope) ||
             self.cached_ratings.build(:scope => scope)
         cached.score = calc_statistics(scope)
-          self.class.periods.keys.each_with_index do |key, index|
-          cached.send("score#{index + 1}=", calc_statistics(scope, Time.now - period_value_by_name(key)))
+          self.class.periods.keys.each_with_index do |period_name, index|
+          cached.send("score#{index + 1}=", calc_statistics(scope, period_name))
         end
         cached.save!
       end
 
-      def build_conditions(scope, starting_at)
-        conditions = ["rateable_type = ? and rateable_id = ? and scope = ?",
-                      self.class.name, self.id, scope]
-
-        if starting_at
+      def build_conditions(scope, period_name = nil)
+        conditions = ["rateable_type = ? and rateable_id = ? and scope = ?", self.class.name, self.id, scope]
+        if period_name
           conditions[0] += " and created_at > ?"
-          conditions << starting_at
+          conditions << period_started_at(period_name)
         end
-
         return conditions
       end
 
-      def calc_statistics(scope, starting_at = nil)
-        return send("calc_statistics_by_#{self.class.statistics_method.to_s}", scope, starting_at)
+      def calc_statistics(scope, period_name = nil)
+        return send("calc_statistics_by_#{self.class.statistics_method.to_s}", scope, period_name)
       end
 
-      def calc_statistics_by_average(scope, starting_at = nil)
-
-        conditions = build_conditions(scope, starting_at)
-
+      def calc_statistics_by_average(scope, period_name = nil)
+        conditions = build_conditions(scope, period_name)
         return Rating.average("score", :conditions => conditions)
       end
 
-      def calc_statistics_by_bayesian(scope, starting_at = nil)
-        conditions = build_conditions(scope, starting_at)
-        votes = count_votes(scope, starting_at).to_f
-        average = Rating.average("score", :conditions => conditions)
-
+      def calc_statistics_by_bayesian(scope, period_name = nil)
+        votes = count_votes(scope, period_name).to_f
+        average = calc_statistics_by_average(scope, period_name)
         return  votes/(votes + self.class.bayesian_votes_minimum)*average + self.class.bayesian_votes_minimum/(votes + self.class.bayesian_votes_minimum)*self.class.bayesian_average
+      end
+
+      def period_started_at(period_name)
+        return Time.now - period_value_by_name(period_name)
       end
     end
 
