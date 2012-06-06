@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = OneMoreRating::VERSION
   s.authors     = ["Andrey Smirnov"]
   s.email       = ["anderson.smirnov@gmail.com"]
-  s.homepage    = "TODO"
+  s.homepage    = "https://github.com/andersonspb/one_more_rating"
   s.summary     = "One more star rating plugin"
-  s.description = "TODO: Description of OneMoreRating."
+  s.description = "One more star rating plugin with some unique features"
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.textile"]
   s.test_files = Dir["test/**/*"]
