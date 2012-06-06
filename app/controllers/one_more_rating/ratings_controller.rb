@@ -11,7 +11,20 @@ module OneMoreRating
 
       respond_to do |format|
         #format.js
-        format.json { render :json => @rateable.rating_score(scope) }
+
+
+        format.json {
+          score = {}
+          votes = {}
+          @rateable.class.periods.keys.each do |period_name|
+            score[period_name] =  @rateable.rating_score(scope, period_name)
+            votes[period_name] =  @rateable.count_votes(scope, period_name)
+          end
+          score[:total] =  @rateable.rating_score(scope)
+          votes[:total] =  @rateable.count_votes(scope)
+
+          render :json => {:score => score, :votes => votes}
+        }
       end
     end
   end

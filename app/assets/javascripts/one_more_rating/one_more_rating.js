@@ -9,9 +9,9 @@ $(function() {
                     rateable_id: $(this).data("rateable_id"),
                     score: value},
                 function(data) {
-                    $(target).rateit(value, data);
+                    period = $(target).data("period");
+                    $(target).rateit(value, data.score[period != null ? period : "total"]);
                     $(target).fadeOut().fadeIn();
-                    //alert(JSON.stringify(this));
                 });
         });
 });
