@@ -1,37 +1,45 @@
-h1. OneMoreRating
+OneMoreRating
+===
 
 This is a one more star rating plugin.
 
-h2. Features
+Features
+---
+
 * Keeps aggregated statistics of ratings for arbitrary time periods. Week, 3 weeks, month etc (Up to 5 periods)
 * Scoped ratings supported on rateable objects
 * 2 algorithms of rating value calculating
 * Rails 3 support
 * Everything is packed as a Rails Engine
-* Minimal HTML code usage (Thanks to "Rateit jQuery plugin":http://rateit.codeplex.com/)
+* Minimal HTML code usage (Thanks to [Rateit jQuery plugin](http://rateit.codeplex.com/))
 * Unobtrusive JavaScript approach
 
-h2. Installation & Usage
+Installation & Usage
+---
 
 1. Add dependency to your Gemfile:
-gem 'one_more_rating', :git => 'git://github.com/andersonspb/one_more_rating.git'
 
-2. Mount the plugin engine in the routes.rb file:
-<pre>
-mount OneMoreRating::Engine, :at => "/one_more_rating"
-</pre>
+    gem 'one_more_rating', :git => 'git://github.com/andersonspb/one_more_rating.git'
+
+2. Add nested resource `ratings` for resource you want to be rated:
+
+    resources :articles do
+      resource :ratings, :only => [:create], :module => 'one_more_rating', :rateable => 'broadcast'
+    end
+
 3. Install migrations:
-$ rake one_more_rating:install:migrations
+
+    $ rake one_more_rating:install:migrations
 
 4. Execute migrations:
-$ rake db:migrate
 
-5. Include call of "rateable" method to class your are going to rate:
-<pre>
-class MyRateable < ActiveRecord::Base
-    rateable :scope => Proc.new {user.country_id}
-end
-</pre>
+    $ rake db:migrate
+
+5. Include call of `rateable` method to class your are going to rate:
+
+    class MyRateable < ActiveRecord::Base
+      rateable :scope => Proc.new {user.country_id}
+    end
 
 Parameters:
 <i>scope</i> - The scope (an integer) the rating will be counted in.
@@ -46,16 +54,16 @@ Optionally. Your can pass the following parameters to "rateable" call:
 Example
 
 <pre>
-class MyRateable < ActiveRecord::Base
+class Article < ActiveRecord::Base
   rateable :periods => {:week => 1.week, :month => 1.month, :month3 => 3.months},
   :statistics_method => :bayesian, :bayesian => {:votes_minimum => 10, :average = > 3}
 end
 </pre>
 
-6. Call "rating_for" helper method in your template
+6. Call `rating_for` helper method in your template
 
 <pre>
-rating_for(@my_rateable)
+rating_for(@article)
 </pre>
 
 Parameters:
@@ -76,7 +84,6 @@ Optional parameters:
 <i>step</i> Step of user rating value change. 1 by default. You can put decimal value 0.5 etc
 
 
-Example
-<pre>
-rating_for(@my_rateable, :url => one_more_rating.ratings_path, :period => :week)
-</pre>
+Example:
+
+    rating_for(@article, :url => article_ratings_path(@article), :period => :week)

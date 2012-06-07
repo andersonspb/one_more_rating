@@ -1,8 +1,9 @@
 module OneMoreRating
   class RatingsController < ApplicationController
     def create
-      rateable_type = Object.const_get(params[:rateable_type])
-      @rateable = rateable_type.find(params[:rateable_id])
+      rateable_type = params[:rateable].camelize.constantize
+      # FIXME Should be a better way to find the key for id
+      @rateable = rateable_type.find(params["#{params[:rateable]}_id"].to_i)
 
       raise SecurityError.new("An attempt to rate an object of type that is not rateable") if !@rateable.respond_to?(:rate)
 

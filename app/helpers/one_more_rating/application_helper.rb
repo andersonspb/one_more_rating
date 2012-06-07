@@ -10,10 +10,8 @@ module OneMoreRating
       attrs["data-rateit-max"]  = options[:max] || 5
       attrs["data-rateit-step"]  = options[:step] || 1
       attrs["data-rateit-value"]  = options[:value] || rateable.rating_score(rateable.class.rateable_scope.call, options[:period])
-      attrs["data-rateable_id"]  = rateable.id
-      attrs["data-rateable_type"]  = rateable.class.name
       attrs["id"]  = options[:id] || "rateable_#{rateable.class.name.downcase}_#{rateable.id}"
-      attrs["data-url"]  = options[:url] || "/one_more_rating/ratings"
+      attrs["data-url"]  = options[:url]
       attrs["data-rateit-readonly"]  = options[:readonly] || false
       if options[:period]
         attrs["data-period"] = options[:period]
