@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.summary     = "One more star rating plugin"
   s.description = "One more star rating plugin with some unique features"
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.textile"]
+  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.markdown"]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 3.2.1"
